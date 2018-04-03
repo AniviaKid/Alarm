@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,12 +20,14 @@ import java.util.Map;
  * Created by ASUS on 2018/3/26.
  */
 
-public class AddRemind extends AppCompatActivity implements View.OnClickListener{
+public class AddRemind extends AppCompatActivity implements View.OnClickListener,NumberPicker.Formatter{
 
     final public int cancel_code=0;
     final public int save_code=1;
     public String remind_content="test";
     TextView content_text;
+    NumberPicker numberPicker1;
+    NumberPicker numberPicker2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +37,19 @@ public class AddRemind extends AppCompatActivity implements View.OnClickListener
         findViewById(R.id.cancel).setOnClickListener(this);
         findViewById(R.id.save).setOnClickListener(this);
         findViewById(R.id.content).setOnClickListener(this);
+
+        Calendar calendar=Calendar.getInstance();
         content_text=(TextView)findViewById(R.id.content_text);
+        numberPicker1=(NumberPicker)findViewById(R.id.hour);
+        numberPicker1.setFormatter(this);
+        numberPicker1.setMaxValue(23);
+        numberPicker1.setMinValue(0);
+        numberPicker1.setValue(calendar.get(Calendar.HOUR_OF_DAY));
+        numberPicker2=(NumberPicker)findViewById(R.id.minute);
+        numberPicker2.setFormatter(this);
+        numberPicker2.setMinValue(0);
+        numberPicker2.setMaxValue(59);
+        numberPicker2.setValue(calendar.get(Calendar.MINUTE));
     }
 
     @Override
@@ -43,9 +59,13 @@ public class AddRemind extends AppCompatActivity implements View.OnClickListener
             this.finish();
         }
         else if(v.getId()==R.id.save){
-            TimePicker timePicker=(TimePicker)findViewById(R.id.time_picker);
+            /*TimePicker timePicker=(TimePicker)findViewById(R.id.time_picker);
             String hour=timePicker.getCurrentHour().toString();
-            String minute=timePicker.getCurrentMinute().toString();
+            String minute=timePicker.getCurrentMinute().toString();*/
+            String hour=""+numberPicker1.getValue();
+            String minute=""+numberPicker2.getValue();
+
+
             Intent intent=new Intent();
             intent.putExtra("hour",hour);
             intent.putExtra("minute",minute);
@@ -74,5 +94,14 @@ public class AddRemind extends AppCompatActivity implements View.OnClickListener
             });
             dialog.show();
         }
+    }
+
+    @Override
+    public String format(int value) {
+        String tmpStr = String.valueOf(value);
+        if (value < 10) {
+            tmpStr = "0" + tmpStr;
+        }
+        return tmpStr;
     }
 }
